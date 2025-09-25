@@ -1,0 +1,109 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+import { store } from './store/store';
+import { theme } from './theme/theme';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n/i18n';
+
+// Components
+import Layout from './components/common/Layout';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+
+// Pages
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/auth/LoginPage';
+import RegistrationPage from './pages/auth/RegistrationPage';
+import DashboardPage from './pages/DashboardPage';
+import LivestockPage from './pages/LivestockPage';
+import HealthRecordsPage from './pages/HealthRecordsPage';
+import AMUMonitoringPage from './pages/AMUMonitoringPage';
+import FeedManagementPage from './pages/FeedManagementPage';
+import YieldTrackingPage from './pages/YieldTrackingPage';
+import ProfilePage from './pages/ProfilePage';
+
+import './styles/globals.css';
+
+function App() {
+  return (
+    <I18nextProvider i18n={i18n}>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Router>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegistrationPage />} />
+              
+              {/* Protected Routes */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <DashboardPage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/livestock" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <LivestockPage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/health-records" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <HealthRecordsPage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/amu-monitoring" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <AMUMonitoringPage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/feed-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <FeedManagementPage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/yield-tracking" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <YieldTrackingPage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <ProfilePage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              {/* Redirect unknown routes to dashboard */}
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </Router>
+        </ThemeProvider>
+      </Provider>
+    </I18nextProvider>
+  );
+}
+
+export default App;
