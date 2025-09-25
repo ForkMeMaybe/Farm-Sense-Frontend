@@ -124,37 +124,41 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
         <Box sx={{ pt: 2 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required error={!!errors.livestock}>
-                <InputLabel>Select Livestock</InputLabel>
-                <Select
-                  value={formData.livestock}
-                  onChange={(e) => handleChange("livestock", e.target.value)}
-                  label="Select Livestock"
-                >
-                  {livestock.map((animal) => (
-                    <MenuItem key={animal.id} value={animal.id}>
-                      {animal.tag_id} - {animal.species} ({animal.breed})
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                select
+                fullWidth
+                required
+                label="Select Livestock"
+                value={formData.livestock}
+                onChange={(e) => handleChange("livestock", e.target.value)}
+                error={!!errors.livestock}
+                helperText={errors.livestock}
+              >
+                {livestock.map((animal) => (
+                  <MenuItem key={animal.id} value={animal.id}>
+                    {animal.tag_id} - {animal.species} ({animal.breed})
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required error={!!errors.event_type}>
-                <InputLabel>Event Type</InputLabel>
-                <Select
-                  value={formData.event_type}
-                  onChange={(e) => handleChange("event_type", e.target.value)}
-                  label="Event Type"
-                >
-                  {eventTypes.map((type) => (
-                    <MenuItem key={type.value} value={type.value}>
-                      {type.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                select
+                fullWidth
+                required
+                label="Event Type"
+                value={formData.event_type}
+                onChange={(e) => handleChange("event_type", e.target.value)}
+                error={!!errors.event_type}
+                helperText={errors.event_type}
+              >
+                {eventTypes.map((type) => (
+                  <MenuItem key={type.value} value={type.value}>
+                    {type.label}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
 
             <Grid item xs={12} sm={6}>

@@ -32,6 +32,13 @@ import AMUMonitoringPage from "./pages/AMUMonitoringPage";
 import FeedManagementPage from "./pages/FeedManagementPage";
 import YieldTrackingPage from "./pages/YieldTrackingPage";
 import ProfilePage from "./pages/ProfilePage";
+import DrugsListPage from "./pages/DrugsListPage";
+import DrugFormPage from "./pages/DrugFormPage";
+import FeedsListPage from "./pages/FeedsListPage";
+import FeedFormPage from "./pages/FeedFormPage";
+import AMUInsightsPage from "./pages/AMUInsightsPage";
+import FeedInsightsPage from "./pages/FeedInsightsPage";
+import YieldInsightsPage from "./pages/YieldInsightsPage";
 
 import "./styles/globals.css";
 
@@ -151,6 +158,78 @@ function App() {
                       <ProtectedRoute>
                         <Layout>
                           <ProfilePage />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  {/* Catalog and Insights */}
+                  <Route
+                    path="/drugs"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <DrugsListPage />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/drugs/new"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <DrugFormPage />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/feeds"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <FeedsListPage />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/feeds/new"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <FeedFormPage />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/insights/amu"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <AMUInsightsPage />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/insights/feed"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <FeedInsightsPage />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/insights/yield"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <YieldInsightsPage />
                         </Layout>
                       </ProtectedRoute>
                     }

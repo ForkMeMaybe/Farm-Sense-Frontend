@@ -163,7 +163,6 @@ class AuthService {
 
   logout(): void {
     TokenStorage.clearTokens();
-    window.location.href = '/login';
   }
 
   isAuthenticated(): boolean {

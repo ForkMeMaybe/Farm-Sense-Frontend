@@ -144,37 +144,41 @@ const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
         <Box sx={{ pt: 2 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required error={!!errors.livestock}>
-                <InputLabel>Select Livestock</InputLabel>
-                <Select
-                  value={formData.livestock}
-                  onChange={(e) => handleChange("livestock", e.target.value)}
-                  label="Select Livestock"
-                >
-                  {livestock.map((animal) => (
-                    <MenuItem key={animal.id} value={animal.id}>
-                      {animal.tag_id} - {animal.species} ({animal.breed})
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                select
+                fullWidth
+                required
+                label="Select Livestock"
+                value={formData.livestock}
+                onChange={(e) => handleChange("livestock", e.target.value)}
+                error={!!errors.livestock}
+                helperText={errors.livestock}
+              >
+                {livestock.map((animal) => (
+                  <MenuItem key={animal.id} value={animal.id}>
+                    {animal.tag_id} - {animal.species} ({animal.breed})
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required error={!!errors.yield_type}>
-                <InputLabel>Yield Type</InputLabel>
-                <Select
-                  value={formData.yield_type}
-                  onChange={(e) => handleYieldTypeChange(e.target.value)}
-                  label="Yield Type"
-                >
-                  {yieldTypes.map((type) => (
-                    <MenuItem key={type.type} value={type.type}>
-                      {type.type.charAt(0).toUpperCase() + type.type.slice(1)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                select
+                fullWidth
+                required
+                label="Yield Type"
+                value={formData.yield_type}
+                onChange={(e) => handleYieldTypeChange(e.target.value)}
+                error={!!errors.yield_type}
+                helperText={errors.yield_type}
+              >
+                {yieldTypes.map((type) => (
+                  <MenuItem key={type.type} value={type.type}>
+                    {type.type.charAt(0).toUpperCase() + type.type.slice(1)}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
 
             <Grid item xs={12} sm={6}>

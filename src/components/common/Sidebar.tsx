@@ -40,6 +40,11 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
     { text: t('nav.amu'), icon: <Medication />, path: '/amu-monitoring' },
     { text: t('nav.feed'), icon: <Agriculture />, path: '/feed-management' },
     { text: t('nav.yield'), icon: <Assessment />, path: '/yield-tracking' },
+    { text: 'Drugs', icon: <Medication />, path: '/drugs' },
+    { text: 'Feeds', icon: <Agriculture />, path: '/feeds' },
+    { text: 'AMU Insights', icon: <Assessment />, path: '/insights/amu' },
+    { text: 'Feed Insights', icon: <Assessment />, path: '/insights/feed' },
+    { text: 'Yield Insights', icon: <Assessment />, path: '/insights/yield' },
   ];
 
   const handleItemClick = (path: string) => {

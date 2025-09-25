@@ -17,7 +17,7 @@ class ApiClient {
     
     this.instance = axios.create({
       baseURL,
-      timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '10000'),
+      // Removed timeout to allow API calls to take as long as needed
       headers: {
         'Content-Type': 'application/json',
         // Only add ngrok header in production (proxy handles it in dev)
@@ -104,7 +104,8 @@ class ApiClient {
             this.failedQueue.forEach(({ reject }) => reject(refreshError));
             this.failedQueue = [];
             TokenStorage.clearTokens();
-            window.location.href = '/login';
+            // Do not hard-redirect here to avoid redirect loops on public pages.
+            // Let the app's routing/guards handle navigation.
             return Promise.reject(refreshError);
           } finally {
             this.isRefreshing = false;

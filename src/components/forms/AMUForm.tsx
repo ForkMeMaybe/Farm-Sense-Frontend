@@ -132,40 +132,42 @@ const AMUForm: React.FC<AMUFormProps> = ({
 
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required error={!!errors.health_record}>
-                <InputLabel>Select Livestock</InputLabel>
-                <Select
-                  value={formData.health_record}
-                  onChange={(e) =>
-                    handleChange("health_record", e.target.value)
-                  }
-                  label="Select Livestock"
-                >
-                  {livestock.map((animal) => (
-                    <MenuItem key={animal.id} value={animal.id}>
-                      {animal.tag_id} - {animal.species} ({animal.breed})
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                select
+                fullWidth
+                required
+                label="Select Livestock"
+                value={formData.health_record}
+                onChange={(e) => handleChange("health_record", e.target.value)}
+                error={!!errors.health_record}
+                helperText={errors.health_record}
+              >
+                {livestock.map((animal) => (
+                  <MenuItem key={animal.id} value={animal.id}>
+                    {animal.tag_id} - {animal.species} ({animal.breed})
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required error={!!errors.drug}>
-                <InputLabel>Select Drug</InputLabel>
-                <Select
-                  value={formData.drug}
-                  onChange={(e) => handleChange("drug", e.target.value)}
-                  label="Select Drug"
-                >
-                  {drugs.map((drug) => (
-                    <MenuItem key={drug.id} value={drug.id}>
-                      {drug.name}{" "}
-                      {drug.active_ingredient && `(${drug.active_ingredient})`}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                select
+                fullWidth
+                required
+                label="Select Drug"
+                value={formData.drug}
+                onChange={(e) => handleChange("drug", e.target.value)}
+                error={!!errors.drug}
+                helperText={errors.drug}
+              >
+                {drugs.map((drug) => (
+                  <MenuItem key={drug.id} value={drug.id}>
+                    {drug.name}
+                    {drug.active_ingredient ? ` (${drug.active_ingredient})` : ''}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
 
             <Grid item xs={12} sm={6}>

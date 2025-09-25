@@ -33,7 +33,9 @@ export interface FeedRecord {
   id: number;
   livestock: number;
   feed_type: string;
+  feed?: number | null;
   quantity_kg: number;
+  price_per_kg?: number | null;
   date: string;
 }
 
