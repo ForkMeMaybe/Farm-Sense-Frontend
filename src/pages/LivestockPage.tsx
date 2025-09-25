@@ -17,9 +17,6 @@ import { Add, Pets, Edit, Visibility } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useLivestock } from "../hooks/useLivestock";
 import LivestockForm from "../components/forms/LivestockForm";
-import DebugInfo from "../components/DebugInfo";
-import ApiTest from "../components/ApiTest";
-import "../utils/apiTest"; // Auto-run API tests
 
 const LivestockPage: React.FC = () => {
   const theme = useTheme();
@@ -185,8 +182,6 @@ const LivestockPage: React.FC = () => {
       }
     }}>
       <Box sx={{ position: 'relative', zIndex: 1 }}>
-        <DebugInfo />
-        <ApiTest />
 
         {hasInvalidData && (
           <Alert 
