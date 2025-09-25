@@ -25,7 +25,7 @@ import {
   PersonAdd,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import GlassCard from "../components/common/GlassCard";
 import projectLogo from "../assets/project_icon_no_background.png";
 
@@ -40,23 +40,23 @@ const LandingPage: React.FC = () => {
   const features = [
     {
       icon: <Agriculture fontSize="large" />,
-      title: t("landing.features.farm.title"),
-      description: t("landing.features.farm.description"),
+      title: t("landing.smartMonitoring"),
+      description: t("landing.smartMonitoringDesc"),
     },
     {
       icon: <Pets fontSize="large" />,
-      title: t("landing.features.livestock.title"),
-      description: t("landing.features.livestock.description"),
+      title: t("dashboard.totalLivestock"),
+      description: t("livestock.title"),
     },
     {
       icon: <Psychology fontSize="large" />,
-      title: t("landing.features.ai.title"),
-      description: t("landing.features.ai.description"),
+      title: t("landing.aiInsights"),
+      description: t("landing.aiInsightsDesc"),
     },
     {
       icon: <Language fontSize="large" />,
-      title: t("landing.features.multilingual.title"),
-      description: t("landing.features.multilingual.description"),
+      title: t("landing.multiLanguage"),
+      description: t("landing.multiLanguageDesc"),
     },
   ];
 
@@ -272,13 +272,20 @@ const LandingPage: React.FC = () => {
                 </Typography>
 
                 {/* CTA Buttons */}
-                <Stack direction="row" spacing={3} sx={{ mt: 4 }}>
+                <Stack
+                  direction="row"
+                  spacing={3}
+                  sx={{ mt: 4, position: "relative", zIndex: 3 }}
+                >
                   <Button
+                    component={RouterLink}
+                    to="/register"
+                    aria-label="Start free trial"
+                    title="Start free trial"
                     variant="contained"
                     size="large"
                     startIcon={<PersonAdd />}
                     endIcon={<ArrowForward />}
-                    onClick={() => navigate("/register")}
                     sx={{
                       background:
                         "linear-gradient(135deg, #10B981 0%, #34D399 100%)",
@@ -299,10 +306,13 @@ const LandingPage: React.FC = () => {
                   </Button>
 
                   <Button
+                    component={RouterLink}
+                    to="/login"
+                    aria-label="Sign in"
+                    title="Sign in"
                     variant="outlined"
                     size="large"
                     startIcon={<Login />}
-                    onClick={() => navigate("/login")}
                     sx={{
                       borderColor: "rgba(255, 255, 255, 0.3)",
                       color: "white",
@@ -369,8 +379,11 @@ const LandingPage: React.FC = () => {
                     justifyContent: "center",
                     position: "relative",
                     overflow: "hidden",
-                    background: "transparent",
-                    boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)",
+                    background:
+                      "linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(241,245,249,0.9) 100%)",
+                    boxShadow:
+                      "0 12px 28px rgba(2, 6, 23, 0.18), inset 0 0 0 1px rgba(15,23,42,0.06)",
+                    border: "1px solid rgba(15,23,42,0.06)",
                   }}
                 >
                   {/* Subtle glow backdrop */}
@@ -389,10 +402,10 @@ const LandingPage: React.FC = () => {
                     src={projectLogo}
                     alt="FarmSense logo"
                     style={{
-                      width: "62%",
-                      height: "62%",
+                      width: "66%",
+                      height: "66%",
                       objectFit: "contain",
-                      filter: "drop-shadow(0 10px 28px rgba(16,185,129,0.35))",
+                      filter: "drop-shadow(0 12px 28px rgba(16,185,129,0.3))",
                     }}
                   />
                   <Box
@@ -643,14 +656,17 @@ const LandingPage: React.FC = () => {
             alignItems="center"
           >
             <Button
+              component={RouterLink}
+              to="/register"
+              aria-label="Start free trial"
+              title="Start free trial"
               variant="contained"
               size="large"
               startIcon={<PersonAdd />}
               endIcon={<ArrowForward />}
-              onClick={() => navigate("/register")}
               sx={{
-                bgcolor: "white",
-                color: "#10B981",
+                bgcolor: "#ffffff",
+                color: "#0f766e",
                 px: 5,
                 py: 2,
                 fontSize: "1.2rem",
@@ -658,11 +674,11 @@ const LandingPage: React.FC = () => {
                 borderRadius: 3,
                 textTransform: "none",
                 minWidth: 200,
-                boxShadow: "0 8px 24px rgba(255, 255, 255, 0.2)",
+                boxShadow: "0 8px 24px rgba(15, 23, 42, 0.18)",
                 "&:hover": {
-                  bgcolor: "#f8fafc",
+                  bgcolor: "#f1f5f9",
                   transform: "translateY(-2px)",
-                  boxShadow: "0 12px 32px rgba(255, 255, 255, 0.3)",
+                  boxShadow: "0 12px 32px rgba(15, 23, 42, 0.24)",
                 },
               }}
             >
@@ -670,10 +686,13 @@ const LandingPage: React.FC = () => {
             </Button>
 
             <Button
+              component={RouterLink}
+              to="/login"
+              aria-label="Sign in"
+              title="Sign in"
               variant="outlined"
               size="large"
               startIcon={<Login />}
-              onClick={() => navigate("/login")}
               sx={{
                 borderColor: "rgba(255, 255, 255, 0.4)",
                 color: "white",
