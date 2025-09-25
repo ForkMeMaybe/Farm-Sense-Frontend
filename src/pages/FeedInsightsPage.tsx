@@ -18,7 +18,9 @@ const FeedInsightsPage: React.FC = () => {
     if (!selected) return;
     setLoading(true);
     try {
-      const res = await apiClient.get('/api/feed-insights/chart-data/', { livestock_id: Number(selected) });
+      const res = await apiClient.get('/api/feed-insights/chart-data/', { 
+        params: { livestock_id: Number(selected) } 
+      });
       setData(res.data);
     } catch (error) {
       console.error('Failed to load feed insights:', error);
@@ -50,13 +52,16 @@ const FeedInsightsPage: React.FC = () => {
       {data && (
         <Grid container spacing={3}>
           {/* Monthly Spend Trend */}
-          {data.monthly_spend && data.monthly_spend.length > 0 && (
+          {data.spend_chart && data.spend_chart.labels && data.spend_chart.labels.length > 0 && (
             <Grid item xs={12} lg={8}>
               <Card className="glass-card">
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Monthly Feed Spend Trend</Typography>
                   <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={data.monthly_spend}>
+                    <LineChart data={data.spend_chart.labels.map((label: string, index: number) => ({
+                      month: label,
+                      total_spend: data.spend_chart.datasets[0].data[index]
+                    }))}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
                       <YAxis tickFormatter={formatCurrency} />
@@ -71,29 +76,33 @@ const FeedInsightsPage: React.FC = () => {
           )}
 
           {/* Feed Type Breakdown */}
-          {data.feed_breakdown && data.feed_breakdown.length > 0 && (
+          {data.breakdown_chart && data.breakdown_chart.labels && data.breakdown_chart.labels.length > 0 && (
             <Grid item xs={12} lg={4}>
               <Card className="glass-card">
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Feed Type Breakdown</Typography>
                   <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={data.feed_breakdown}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="total_spend"
-                      >
-                        {data.feed_breakdown.map((entry: any, index: number) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
+                    <BarChart data={data.breakdown_chart.labels.map((label: string, index: number) => {
+                      const entry: any = { month: label };
+                      data.breakdown_chart.datasets.forEach((dataset: any) => {
+                        entry[dataset.label] = dataset.data[index];
+                      });
+                      return entry;
+                    })}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis tickFormatter={formatCurrency} />
                       <Tooltip formatter={(value: number) => [formatCurrency(value), 'Spend']} />
-                    </PieChart>
+                      <Legend />
+                      {data.breakdown_chart.datasets.map((dataset: any, index: number) => (
+                        <Bar 
+                          key={dataset.label}
+                          dataKey={dataset.label} 
+                          stackId="feed"
+                          fill={dataset.backgroundColor}
+                        />
+                      ))}
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
@@ -101,47 +110,49 @@ const FeedInsightsPage: React.FC = () => {
           )}
 
           {/* Summary Stats */}
-          <Grid item xs={12}>
-            <Card className="glass-card">
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Summary Statistics</Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(136, 132, 216, 0.1)', borderRadius: 2 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#8884d8' }}>
-                        {data.total_spend ? formatCurrency(data.total_spend) : '$0.00'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">Total Spend</Typography>
-                    </Box>
+          {data.summary && (
+            <Grid item xs={12}>
+              <Card className="glass-card">
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Summary Statistics</Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(136, 132, 216, 0.1)', borderRadius: 2 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: '#8884d8' }}>
+                          ₦{data.summary.total_spend ? data.summary.total_spend.toFixed(2) : '0.00'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">Total Spend</Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(0, 196, 159, 0.1)', borderRadius: 2 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: '#00C49F' }}>
+                          ₦{data.summary.avg_monthly_spend ? data.summary.avg_monthly_spend.toFixed(2) : '0.00'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">Avg Monthly Spend</Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255, 187, 40, 0.1)', borderRadius: 2 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: '#FFBB28' }}>
+                          {data.summary.time_period || 'N/A'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">Time Period</Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255, 128, 66, 0.1)', borderRadius: 2 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: '#FF8042' }}>
+                          {data.spend_chart ? data.spend_chart.labels.length : 0}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">Months Tracked</Typography>
+                      </Box>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(0, 196, 159, 0.1)', borderRadius: 2 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#00C49F' }}>
-                        {data.total_quantity ? `${data.total_quantity.toFixed(1)} kg` : '0 kg'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">Total Quantity</Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255, 187, 40, 0.1)', borderRadius: 2 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#FFBB28' }}>
-                        {data.avg_cost_per_kg ? formatCurrency(data.avg_cost_per_kg) : '$0.00'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">Avg Cost/kg</Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255, 128, 66, 0.1)', borderRadius: 2 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#FF8042' }}>
-                        {data.record_count || 0}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">Total Records</Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
         </Grid>
       )}
     </Box>

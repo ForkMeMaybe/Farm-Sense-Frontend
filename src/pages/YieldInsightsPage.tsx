@@ -18,7 +18,9 @@ const YieldInsightsPage: React.FC = () => {
     if (!selected) return;
     setLoading(true);
     try {
-      const res = await apiClient.get('/api/yield-insights/chart-data/', { livestock_id: Number(selected) });
+      const res = await apiClient.get('/api/yield-insights/chart-data/', { 
+        params: { livestock_id: Number(selected) } 
+      });
       setData(res.data);
     } catch (error) {
       console.error('Failed to load yield insights:', error);
@@ -48,20 +50,28 @@ const YieldInsightsPage: React.FC = () => {
       {data && (
         <Grid container spacing={3}>
           {/* Monthly Yield Trend */}
-          {data.monthly_yield && data.monthly_yield.length > 0 && (
+          {data.labels && data.labels.length > 0 && (
             <Grid item xs={12} lg={8}>
               <Card className="glass-card">
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Monthly Yield Trend</Typography>
                   <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={data.monthly_yield}>
+                    <LineChart data={data.labels.map((label: string, index: number) => ({
+                      month: label,
+                      total_yield: data.datasets[0].data[index]
+                    }))}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Line type="monotone" dataKey="total_yield" stroke="#00C49F" strokeWidth={2} name="Total Yield" />
-                      <Line type="monotone" dataKey="avg_yield" stroke="#FFBB28" strokeWidth={2} name="Average Yield" />
+                      <Line 
+                        type="monotone" 
+                        dataKey="total_yield" 
+                        stroke={data.datasets[0].borderColor} 
+                        strokeWidth={2} 
+                        name={data.datasets[0].label}
+                      />
                     </LineChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -70,7 +80,7 @@ const YieldInsightsPage: React.FC = () => {
           )}
 
           {/* Yield Type Breakdown */}
-          {data.yield_breakdown && data.yield_breakdown.length > 0 && (
+          {data.datasets && data.datasets.length > 0 && (
             <Grid item xs={12} lg={4}>
               <Card className="glass-card">
                 <CardContent>
@@ -78,17 +88,20 @@ const YieldInsightsPage: React.FC = () => {
                   <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                       <Pie
-                        data={data.yield_breakdown}
+                        data={data.datasets.map((dataset: any) => ({
+                          name: dataset.label,
+                          value: dataset.data.reduce((sum: number, val: number) => sum + val, 0)
+                        }))}
                         cx="50%"
                         cy="50%"
                         labelLine={false}
                         label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                         outerRadius={80}
                         fill="#00C49F"
-                        dataKey="total_yield"
+                        dataKey="value"
                       >
-                        {data.yield_breakdown.map((entry: any, index: number) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        {data.datasets.map((dataset: any, index: number) => (
+                          <Cell key={`cell-${index}`} fill={dataset.backgroundColor} />
                         ))}
                       </Pie>
                       <Tooltip />
@@ -100,20 +113,31 @@ const YieldInsightsPage: React.FC = () => {
           )}
 
           {/* Yield by Type Bar Chart */}
-          {data.yield_breakdown && data.yield_breakdown.length > 0 && (
+          {data.labels && data.labels.length > 0 && (
             <Grid item xs={12}>
               <Card className="glass-card">
                 <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Yield by Type</Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Yield by Month</Typography>
                   <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={data.yield_breakdown}>
+                    <BarChart data={data.labels.map((label: string, index: number) => {
+                      const entry: any = { month: label };
+                      data.datasets.forEach((dataset: any) => {
+                        entry[dataset.label] = dataset.data[index];
+                      });
+                      return entry;
+                    })}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="yield_type" />
+                      <XAxis dataKey="month" />
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="total_yield" fill="#00C49F" name="Total Yield" />
-                      <Bar dataKey="avg_yield" fill="#FFBB28" name="Average Yield" />
+                      {data.datasets.map((dataset: any, index: number) => (
+                        <Bar 
+                          key={dataset.label}
+                          dataKey={dataset.label} 
+                          fill={dataset.backgroundColor}
+                        />
+                      ))}
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -122,47 +146,49 @@ const YieldInsightsPage: React.FC = () => {
           )}
 
           {/* Summary Stats */}
-          <Grid item xs={12}>
-            <Card className="glass-card">
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Summary Statistics</Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(0, 196, 159, 0.1)', borderRadius: 2 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#00C49F' }}>
-                        {data.total_yield ? data.total_yield.toFixed(1) : '0'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">Total Yield</Typography>
-                    </Box>
+          {data.summary && (
+            <Grid item xs={12}>
+              <Card className="glass-card">
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Summary Statistics</Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(0, 196, 159, 0.1)', borderRadius: 2 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: '#00C49F' }}>
+                          {data.summary.total_yield ? data.summary.total_yield.toFixed(1) : '0'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">Total Yield</Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255, 187, 40, 0.1)', borderRadius: 2 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: '#FFBB28' }}>
+                          {data.summary.types ? data.summary.types.join(', ') : 'N/A'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">Yield Types</Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(136, 132, 216, 0.1)', borderRadius: 2 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: '#8884d8' }}>
+                          {data.summary.time_period || 'N/A'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">Time Period</Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255, 128, 66, 0.1)', borderRadius: 2 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: '#FF8042' }}>
+                          {data.labels ? data.labels.length : 0}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">Months Tracked</Typography>
+                      </Box>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255, 187, 40, 0.1)', borderRadius: 2 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#FFBB28' }}>
-                        {data.avg_yield ? data.avg_yield.toFixed(1) : '0'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">Average Yield</Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(136, 132, 216, 0.1)', borderRadius: 2 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#8884d8' }}>
-                        {data.max_yield ? data.max_yield.toFixed(1) : '0'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">Max Yield</Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255, 128, 66, 0.1)', borderRadius: 2 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#FF8042' }}>
-                        {data.record_count || 0}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">Total Records</Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
         </Grid>
       )}
     </Box>
