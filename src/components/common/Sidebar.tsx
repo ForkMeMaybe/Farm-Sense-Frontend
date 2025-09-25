@@ -50,32 +50,70 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
   };
 
   const drawerContent = (
-    <Box sx={{ overflow: 'auto', height: '100%' }}>
-      <Box sx={{ p: 2, textAlign: 'center' }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
+    <Box 
+      sx={{ 
+        overflow: 'auto', 
+        height: '100%',
+        background: 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(10px)',
+      }}
+    >
+      <Box sx={{ p: 3, textAlign: 'center' }}>
+        <Typography 
+          variant="h5" 
+          sx={{ 
+            fontWeight: 800, 
+            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 1,
+            letterSpacing: '-0.02em',
+          }}
+        >
           🌾 FarmSense
         </Typography>
-        <Typography variant="caption" color="text.secondary">
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            color: 'text.secondary',
+            fontWeight: 500,
+          }}
+        >
           {t('auth.empoweringFarmers')}
         </Typography>
       </Box>
       
-      <Divider />
+      <Divider sx={{ mx: 2, background: 'rgba(16, 185, 129, 0.2)' }} />
       
-      <List sx={{ p: 0 }}>
-        {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
+      <List sx={{ p: 1, mt: 2 }}>
+        {menuItems.map((item, index) => (
+          <ListItem key={item.text} disablePadding className="slide-in-left" style={{ animationDelay: `${index * 0.1}s` }}>
             <ListItemButton
               selected={location.pathname === item.path}
               onClick={() => handleItemClick(item.path)}
               sx={{
-                minHeight: 48,
-                px: 2.5,
+                minHeight: 56,
+                mx: 1,
+                borderRadius: 3,
+                mb: 0.5,
+                background: location.pathname === item.path 
+                  ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%)'
+                  : 'transparent',
+                border: location.pathname === item.path 
+                  ? '1px solid rgba(16, 185, 129, 0.3)'
+                  : '1px solid transparent',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  background: location.pathname === item.path 
+                    ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%)'
+                    : 'rgba(16, 185, 129, 0.08)',
+                  transform: 'translateX(4px)',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)',
+                },
                 '&.Mui-selected': {
-                  backgroundColor: 'primary.light',
-                  color: 'primary.contrastText',
                   '&:hover': {
-                    backgroundColor: 'primary.main',
+                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%)',
                   },
                 },
               }}
@@ -83,9 +121,11 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
               <ListItemIcon
                 sx={{
                   minWidth: 0,
-                  mr: 3,
+                  mr: 2.5,
                   justifyContent: 'center',
-                  color: location.pathname === item.path ? 'inherit' : 'text.secondary',
+                  color: location.pathname === item.path ? '#10B981' : 'text.secondary',
+                  fontSize: '1.3rem',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 {item.icon}
@@ -93,7 +133,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
               <ListItemText 
                 primary={item.text}
                 primaryTypographyProps={{
-                  fontWeight: location.pathname === item.path ? 600 : 400,
+                  fontWeight: location.pathname === item.path ? 600 : 500,
+                  fontSize: '0.95rem',
+                  color: location.pathname === item.path ? '#10B981' : 'text.primary',
                 }}
               />
             </ListItemButton>

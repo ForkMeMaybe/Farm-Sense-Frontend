@@ -52,13 +52,31 @@ const Header: React.FC = () => {
   };
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1 }}>
-      <Toolbar>
+    <AppBar 
+      position="fixed" 
+      sx={{ 
+        zIndex: theme.zIndex.drawer + 1,
+        background: 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <Toolbar sx={{ minHeight: '64px !important' }}>
         <IconButton
           edge="start"
           color="inherit"
           onClick={handleMenuToggle}
-          sx={{ mr: 2 }}
+          sx={{ 
+            mr: 2,
+            background: 'rgba(16, 185, 129, 0.1)',
+            '&:hover': {
+              background: 'rgba(16, 185, 129, 0.2)',
+              transform: 'scale(1.05)',
+            },
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
         >
           <MenuIcon />
         </IconButton>
@@ -68,9 +86,13 @@ const Header: React.FC = () => {
             variant="h6"
             component="div"
             sx={{
-              fontWeight: 700,
-              color: theme.palette.primary.main,
-              fontSize: { xs: '1.1rem', sm: '1.25rem' },
+              fontWeight: 800,
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontSize: { xs: '1.2rem', sm: '1.4rem' },
+              letterSpacing: '-0.02em',
             }}
           >
             🌾 FarmSense
@@ -80,7 +102,18 @@ const Header: React.FC = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {!isMobile && <LanguageSwitcher />}
           
-          <IconButton color="inherit" size="large">
+          <IconButton 
+            color="inherit" 
+            size="large"
+            sx={{
+              background: 'rgba(245, 158, 11, 0.1)',
+              '&:hover': {
+                background: 'rgba(245, 158, 11, 0.2)',
+                transform: 'scale(1.05)',
+              },
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
+          >
             <Notifications />
           </IconButton>
 
@@ -88,8 +121,23 @@ const Header: React.FC = () => {
             onClick={handleMenuOpen}
             color="inherit"
             size="large"
+            sx={{
+              '&:hover': {
+                transform: 'scale(1.05)',
+              },
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
           >
-            <Avatar sx={{ width: 32, height: 32, bgcolor: theme.palette.primary.main }}>
+            <Avatar 
+              sx={{ 
+                width: 36, 
+                height: 36, 
+                background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                fontSize: '1rem',
+                fontWeight: 600,
+              }}
+            >
               {user?.username?.charAt(0).toUpperCase() || 'U'}
             </Avatar>
           </IconButton>

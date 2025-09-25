@@ -6,7 +6,6 @@ import {
   CardContent,
   Typography,
   Paper,
-  IconButton,
   Fab,
   useTheme,
   useMediaQuery,
@@ -18,11 +17,11 @@ import {
   ListItemText,
   ListItemAvatar,
 } from '@mui/material';
+import GlassCard from '../components/common/GlassCard';
 import {
   Add,
   Pets,
   LocalHospital,
-  TrendingUp,
   Warning,
   CheckCircle,
   Agriculture,
@@ -52,7 +51,6 @@ const DashboardPage: React.FC = () => {
   const totalAnimals = animals.length;
   const healthyAnimals = animals.filter(animal => animal.health_status === 'healthy').length;
   const sickAnimals = animals.filter(animal => animal.health_status === 'sick').length;
-  const recoveringAnimals = animals.filter(animal => animal.health_status === 'recovering').length;
 
   const stats = [
     {
@@ -154,57 +152,91 @@ const DashboardPage: React.FC = () => {
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card
+          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index} className="slide-in-left">
+            <GlassCard
+              glassVariant="glass"
+              interactive
+              intensity="medium"
               sx={{
                 height: '100%',
                 background: `linear-gradient(135deg, ${stat.color}15 0%, ${stat.color}05 100%)`,
                 border: `1px solid ${stat.color}30`,
-                transition: 'all 0.3s ease',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${stat.color}, ${stat.color}80)`,
+                },
                 '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: `0 8px 16px ${stat.color}30`,
+                  background: `linear-gradient(135deg, ${stat.color}25 0%, ${stat.color}10 100%)`,
+                  boxShadow: `0 20px 40px ${stat.color}20`,
                 },
               }}
             >
-              <CardContent>
+              <CardContent sx={{ position: 'relative', zIndex: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Box>
-                    <Typography color="text.secondary" variant="body2" sx={{ mb: 1 }}>
+                    <Typography 
+                      variant="overline" 
+                      sx={{ 
+                        mb: 1, 
+                        color: 'text.secondary',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                      }}
+                    >
                       {stat.title}
                     </Typography>
-                    <Typography variant="h4" sx={{ fontWeight: 700, color: stat.color, mb: 1 }}>
+                    <Typography 
+                      variant="h3" 
+                      sx={{ 
+                        fontWeight: 800, 
+                        color: stat.color, 
+                        mb: 1,
+                        lineHeight: 1.2,
+                      }}
+                    >
                       {stat.value}
                     </Typography>
                     <Chip
                       label={stat.trend}
                       size="small"
                       sx={{
-                        backgroundColor: `${stat.color}20`,
+                        background: `linear-gradient(135deg, ${stat.color}20, ${stat.color}30)`,
                         color: stat.color,
                         fontWeight: 600,
+                        borderRadius: 2,
+                        '& .MuiChip-label': {
+                          fontSize: '0.75rem',
+                        },
                       }}
                     />
                   </Box>
                   <Avatar
                     sx={{
-                      backgroundColor: stat.color,
-                      width: 56,
-                      height: 56,
+                      background: `linear-gradient(135deg, ${stat.color}, ${stat.color}CC)`,
+                      width: 64,
+                      height: 64,
+                      boxShadow: `0 8px 16px ${stat.color}40`,
                     }}
                   >
                     {stat.icon}
                   </Avatar>
                 </Box>
               </CardContent>
-            </Card>
+            </GlassCard>
           </Grid>
         ))}
       </Grid>
 
       <Grid container spacing={3}>
         {/* Quick Actions */}
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
@@ -212,7 +244,7 @@ const DashboardPage: React.FC = () => {
               </Typography>
               <Grid container spacing={2}>
                 {quickActions.map((action, index) => (
-                  <Grid item xs={6} key={index}>
+                  <Grid size={{ xs: 6 }} key={index}>
                     <Paper
                       sx={{
                         p: 2,
@@ -251,7 +283,7 @@ const DashboardPage: React.FC = () => {
         </Grid>
 
         {/* Recent Activity */}
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
@@ -299,7 +331,7 @@ const DashboardPage: React.FC = () => {
         </Grid>
 
         {/* Health Overview */}
-        <Grid item xs={12} lg={4}>
+        <Grid size={{ xs: 12, lg: 4 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>

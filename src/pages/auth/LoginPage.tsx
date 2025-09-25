@@ -60,12 +60,14 @@ const LoginPage: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         display: 'flex',
         alignItems: 'center',
         position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Animated background pattern */}
       <Box
         sx={{
           position: 'absolute',
@@ -76,35 +78,86 @@ const LoginPage: React.FC = () => {
           backgroundImage: 'url(https://images.pexels.com/photos/1595108/pexels-photo-1595108.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          opacity: 0.1,
+          opacity: 0.15,
+        }}
+      />
+      
+      {/* Floating glass elements */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '10%',
+          left: '10%',
+          width: '200px',
+          height: '200px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '50%',
+          opacity: 0.6,
+          animation: 'pulse 3s infinite',
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: '15%',
+          right: '15%',
+          width: '150px',
+          height: '150px',
+          background: 'rgba(16, 185, 129, 0.2)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '50%',
+          opacity: 0.7,
+          animation: 'pulse 4s infinite',
         }}
       />
       
       <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 1 }}>
         <Paper
-          elevation={24}
+          elevation={0}
+          className="glass-card fade-in"
           sx={{
-            p: 4,
-            borderRadius: 3,
-            backdropFilter: 'blur(10px)',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            p: { xs: 3, sm: 5 },
+            borderRadius: 4,
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
           }}
         >
           <Box textAlign="center" sx={{ mb: 4 }}>
             <Typography
-              variant="h3"
+              variant="h2"
               sx={{ 
-                fontWeight: 700, 
-                color: theme.palette.primary.main,
+                fontWeight: 800, 
+                background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
                 mb: 1,
+                letterSpacing: '-0.02em',
               }}
             >
               🌾 FarmSense
             </Typography>
-            <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                fontWeight: 700, 
+                mb: 1,
+                color: 'text.primary',
+              }}
+            >
               {t('auth.welcomeBack')}
             </Typography>
-            <Typography color="text.secondary">
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                color: 'text.secondary',
+                fontSize: '1.1rem',
+              }}
+            >
               {t('auth.empoweringFarmers')}
             </Typography>
           </Box>

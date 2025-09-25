@@ -1,0 +1,22 @@
+{
+  "version": "0.2",
+  "words": [
+    "glassmorphism",
+    "Glassmorphism",
+    "Rajesh",
+    "Priya",
+    "Amit",
+    "Noto",
+    "Segoe",
+    "dont"
+  ],
+  "enabledLanguageIds": [
+    "typescript",
+    "typescriptreact",
+    "javascript",
+    "javascriptreact",
+    "css",
+    "scss",
+    "json"
+  ]
+}
