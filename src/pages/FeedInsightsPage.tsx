@@ -18,9 +18,7 @@ const FeedInsightsPage: React.FC = () => {
     if (!selected) return;
     setLoading(true);
     try {
-      const res = await apiClient.get('/api/feed-insights/chart-data/', { 
-        params: { livestock_id: Number(selected) } 
-      });
+      const res = await apiClient.get(`/api/feed-insights/chart-data/?livestock_id=${Number(selected)}`);
       setData(res.data);
     } catch (error) {
       console.error('Failed to load feed insights:', error);
