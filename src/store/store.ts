@@ -3,6 +3,7 @@ import authSlice from './slices/authSlice';
 import livestockSlice from './slices/livestockSlice';
 import healthSlice from './slices/healthSlice';
 import uiSlice from './slices/uiSlice';
+import { amuReducer, feedReducer, yieldReducer } from './slices/farmSlices';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,9 @@ export const store = configureStore({
     livestock: livestockSlice,
     health: healthSlice,
     ui: uiSlice,
+    amu: amuReducer,
+    feed: feedReducer,
+    yield: yieldReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
