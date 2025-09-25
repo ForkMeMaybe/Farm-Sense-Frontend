@@ -46,4 +46,10 @@ i18n
     }
   });
 
+// Normalize detected language to base code (e.g., en-US -> en)
+const baseLang = (i18n.language || 'en').split('-')[0];
+if (baseLang !== i18n.language) {
+  i18n.changeLanguage(baseLang);
+}
+
 export default i18n;

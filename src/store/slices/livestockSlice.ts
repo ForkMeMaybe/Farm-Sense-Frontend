@@ -31,7 +31,8 @@ export const fetchLivestock = createAsyncThunk(
   'livestock/fetchAll',
   async () => {
     const response = await livestockService.getAll();
-    return response.data;
+    const data = response.data;
+    return Array.isArray(data) ? data : (Array.isArray(data?.results) ? data.results : []);
   }
 );
 
