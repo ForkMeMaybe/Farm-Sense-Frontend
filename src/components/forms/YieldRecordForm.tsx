@@ -25,6 +25,7 @@ interface YieldRecordFormProps {
   onClose: () => void;
   yieldRecord?: YieldRecord | null;
   mode: "create" | "edit";
+  onSaved?: () => void;
 }
 
 const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
@@ -32,6 +33,7 @@ const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
   onClose,
   yieldRecord,
   mode,
+  onSaved,
 }) => {
   const { t } = useTranslation();
 
@@ -123,6 +125,7 @@ const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
         await yieldService.update(yieldRecord.id, submitData);
       }
 
+      onSaved && onSaved();
       onClose();
     } catch (error) {
       console.error("Error saving yield record:", error);
@@ -219,11 +222,7 @@ const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
 
       <DialogActions sx={{ p: 3 }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
-          onClick={handleSubmit}
-          variant="contained"
-          startIcon={<CircularProgress size={20} />}
-        >
+        <Button onClick={handleSubmit} variant="contained">
           {mode === "create" ? "Record Yield" : "Update Yield Record"}
         </Button>
       </DialogActions>

@@ -27,6 +27,7 @@ interface HealthRecordFormProps {
   onClose: () => void;
   healthRecord?: HealthRecord | null;
   mode: "create" | "edit";
+  onSaved?: () => void;
 }
 
 const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
@@ -34,6 +35,7 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
   onClose,
   healthRecord,
   mode,
+  onSaved,
 }) => {
   const { t } = useTranslation();
 
@@ -103,6 +105,7 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
         await healthRecordService.update(healthRecord.id, submitData);
       }
 
+      onSaved && onSaved();
       onClose();
     } catch (error) {
       console.error("Error saving health record:", error);
@@ -211,11 +214,7 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
 
       <DialogActions sx={{ p: 3 }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
-          onClick={handleSubmit}
-          variant="contained"
-          startIcon={<CircularProgress size={20} />}
-        >
+        <Button onClick={handleSubmit} variant="contained">
           {mode === "create" ? "Add Health Record" : "Update Health Record"}
         </Button>
       </DialogActions>

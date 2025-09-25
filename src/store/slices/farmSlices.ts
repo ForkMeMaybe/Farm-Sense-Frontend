@@ -19,24 +19,24 @@ const initialAMUState: AMUState = {
 export const fetchAMURecords = createAsyncThunk(
     'amu/fetchAll',
     async () => {
-        const response = await amuService.getAMURecords();
-        return response.data;
+        const data = await amuService.getAll();
+        return Array.isArray(data) ? data : [];
     }
 );
 
 export const addAMURecord = createAsyncThunk(
     'amu/add',
     async (data: Omit<AMURecord, 'id'>) => {
-        const response = await amuService.createAMURecord(data);
-        return response.data;
+        const response = await amuService.create(data);
+        return response;
     }
 );
 
 export const generateAMUInsights = createAsyncThunk(
     'amu/generateInsights',
     async (livestockId: number) => {
-        const response = await amuService.generateAMUInsights(livestockId);
-        return response.data;
+        const response = await amuService.generateInsights(livestockId);
+        return response;
     }
 );
 
@@ -83,8 +83,8 @@ const initialFeedState: FeedState = {
 export const fetchFeedRecords = createAsyncThunk(
     'feed/fetchAll',
     async () => {
-        const response = await feedService.getAll();
-        return response.data;
+        const data = await feedService.getAll();
+        return Array.isArray(data) ? data : [];
     }
 );
 
@@ -92,7 +92,7 @@ export const addFeedRecord = createAsyncThunk(
     'feed/add',
     async (data: Omit<FeedRecord, 'id'>) => {
         const response = await feedService.create(data);
-        return response.data;
+        return response;
     }
 );
 
@@ -136,8 +136,8 @@ const initialYieldState: YieldState = {
 export const fetchYieldRecords = createAsyncThunk(
     'yield/fetchAll',
     async () => {
-        const response = await yieldService.getAll();
-        return response.data;
+        const data = await yieldService.getAll();
+        return Array.isArray(data) ? data : [];
     }
 );
 
@@ -145,7 +145,7 @@ export const addYieldRecord = createAsyncThunk(
     'yield/add',
     async (data: Omit<YieldRecord, 'id'>) => {
         const response = await yieldService.create(data);
-        return response.data;
+        return response;
     }
 );
 

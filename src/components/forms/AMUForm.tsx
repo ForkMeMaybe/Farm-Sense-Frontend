@@ -26,6 +26,7 @@ interface AMUFormProps {
   onClose: () => void;
   amuRecord?: AMURecord | null;
   mode: "create" | "edit";
+  onSaved?: () => void;
 }
 
 const AMUForm: React.FC<AMUFormProps> = ({
@@ -33,6 +34,7 @@ const AMUForm: React.FC<AMUFormProps> = ({
   onClose,
   amuRecord,
   mode,
+  onSaved,
 }) => {
   const { t } = useTranslation();
 
@@ -106,6 +108,7 @@ const AMUForm: React.FC<AMUFormProps> = ({
         await amuService.update(amuRecord.id, submitData);
       }
 
+      onSaved && onSaved();
       onClose();
     } catch (error) {
       console.error("Error saving AMU record:", error);
@@ -201,11 +204,7 @@ const AMUForm: React.FC<AMUFormProps> = ({
 
       <DialogActions sx={{ p: 3 }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
-          onClick={handleSubmit}
-          variant="contained"
-          startIcon={<CircularProgress size={20} />}
-        >
+        <Button onClick={handleSubmit} variant="contained">
           {mode === "create" ? "Add Treatment" : "Update Treatment"}
         </Button>
       </DialogActions>

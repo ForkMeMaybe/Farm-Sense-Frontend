@@ -25,6 +25,7 @@ interface FeedRecordFormProps {
   onClose: () => void;
   feedRecord?: FeedRecord | null;
   mode: "create" | "edit";
+  onSaved?: () => void;
 }
 
 const FeedRecordForm: React.FC<FeedRecordFormProps> = ({
@@ -32,6 +33,7 @@ const FeedRecordForm: React.FC<FeedRecordFormProps> = ({
   onClose,
   feedRecord,
   mode,
+  onSaved,
 }) => {
   const { t } = useTranslation();
 
@@ -113,6 +115,7 @@ const FeedRecordForm: React.FC<FeedRecordFormProps> = ({
         await feedService.update(feedRecord.id, submitData);
       }
 
+      onSaved && onSaved();
       onClose();
     } catch (error) {
       console.error("Error saving feed record:", error);
@@ -197,11 +200,7 @@ const FeedRecordForm: React.FC<FeedRecordFormProps> = ({
 
       <DialogActions sx={{ p: 3 }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
-          onClick={handleSubmit}
-          variant="contained"
-          startIcon={<CircularProgress size={20} />}
-        >
+        <Button onClick={handleSubmit} variant="contained">
           {mode === "create" ? "Record Feed" : "Update Feed Record"}
         </Button>
       </DialogActions>
