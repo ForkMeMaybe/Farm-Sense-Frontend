@@ -1,15 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { healthService } from '../../services/healthService';
-
-export interface HealthRecord {
-  id: number;
-  livestock: number;
-  event_type: 'vaccination' | 'sickness' | 'check-up' | 'treatment';
-  event_date: string;
-  notes?: string;
-  diagnosis?: string;
-  treatment_outcome?: string;
-}
+import healthRecordService, { HealthRecord } from '../../services/healthService';
 
 interface HealthState {
   records: HealthRecord[];
@@ -26,16 +16,16 @@ const initialState: HealthState = {
 export const fetchHealthRecords = createAsyncThunk(
   'health/fetchAll',
   async () => {
-    const response = await healthService.getAll();
-    return response.data;
+    const data = await healthRecordService.getAll();
+    return Array.isArray(data) ? data : [];
   }
 );
 
 export const addHealthRecord = createAsyncThunk(
   'health/add',
   async (data: Omit<HealthRecord, 'id'>) => {
-    const response = await healthService.create(data);
-    return response.data;
+    const response = await healthRecordService.create(data);
+    return response;
   }
 );
 

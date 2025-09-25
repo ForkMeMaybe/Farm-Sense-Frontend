@@ -54,39 +54,63 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
       sx={{ 
         overflow: 'auto', 
         height: '100%',
-        background: 'rgba(255, 255, 255, 0.9)',
-        backdropFilter: 'blur(10px)',
+        background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.2)',
+        position: 'relative',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 50%)',
+          pointerEvents: 'none',
+        }
       }}
     >
-      <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography 
-          variant="h5" 
-          sx={{ 
-            fontWeight: 800, 
-            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            mb: 1,
-            letterSpacing: '-0.02em',
-          }}
-        >
-          🌾 FarmSense
-        </Typography>
-        <Typography 
-          variant="body2" 
-          sx={{ 
-            color: 'text.secondary',
-            fontWeight: 500,
-          }}
-        >
-          {t('auth.empoweringFarmers')}
-        </Typography>
+      <Box sx={{ p: 3, textAlign: 'center', position: 'relative', zIndex: 1 }}>
+        <Box sx={{ 
+          mb: 2,
+          p: 2,
+          borderRadius: 3,
+          background: 'rgba(16, 185, 129, 0.08)',
+          border: '1px solid rgba(16, 185, 129, 0.2)',
+        }}>
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              fontWeight: 800, 
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              mb: 1,
+              letterSpacing: '-0.02em',
+              fontSize: '1.5rem',
+            }}
+          >
+            🌾 FarmSense
+          </Typography>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: 'text.secondary',
+              fontWeight: 500,
+              fontSize: '0.8rem',
+              lineHeight: 1.4,
+            }}
+          >
+            {t('auth.empoweringFarmers')}
+          </Typography>
+        </Box>
       </Box>
       
       <Divider sx={{ mx: 2, background: 'rgba(16, 185, 129, 0.2)' }} />
       
-      <List sx={{ p: 1, mt: 2 }}>
+      <List sx={{ p: 1, mt: 2, position: 'relative', zIndex: 1 }}>
         {menuItems.map((item, index) => (
           <ListItem key={item.text} disablePadding className="slide-in-left" style={{ animationDelay: `${index * 0.1}s` }}>
             <ListItemButton
@@ -99,21 +123,43 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
                 mb: 0.5,
                 background: location.pathname === item.path 
                   ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%)'
-                  : 'transparent',
+                  : 'rgba(255, 255, 255, 0.6)',
                 border: location.pathname === item.path 
-                  ? '1px solid rgba(16, 185, 129, 0.3)'
-                  : '1px solid transparent',
+                  ? '1px solid rgba(16, 185, 129, 0.4)'
+                  : '1px solid rgba(255, 255, 255, 0.3)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: location.pathname === item.path 
+                    ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)'
+                    : 'transparent',
+                  opacity: 0,
+                  transition: 'opacity 0.3s ease',
+                },
                 '&:hover': {
                   background: location.pathname === item.path 
                     ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%)'
                     : 'rgba(16, 185, 129, 0.08)',
-                  transform: 'translateX(4px)',
-                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)',
+                  transform: 'translateX(6px)',
+                  boxShadow: '0 8px 20px rgba(16, 185, 129, 0.25)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  '&::before': {
+                    opacity: 1,
+                  },
                 },
                 '&.Mui-selected': {
                   '&:hover': {
-                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%)',
+                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.2) 100%)',
+                    transform: 'translateX(6px)',
                   },
                 },
               }}
@@ -126,6 +172,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
                   color: location.pathname === item.path ? '#10B981' : 'text.secondary',
                   fontSize: '1.3rem',
                   transition: 'all 0.3s ease',
+                  position: 'relative',
+                  zIndex: 1,
                 }}
               >
                 {item.icon}
@@ -136,6 +184,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
                   fontWeight: location.pathname === item.path ? 600 : 500,
                   fontSize: '0.95rem',
                   color: location.pathname === item.path ? '#10B981' : 'text.primary',
+                  position: 'relative',
+                  zIndex: 1,
                 }}
               />
             </ListItemButton>
@@ -143,9 +193,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
         ))}
       </List>
 
-      <Divider sx={{ my: 2 }} />
+      <Divider sx={{ my: 2, mx: 2, background: 'rgba(16, 185, 129, 0.2)' }} />
 
-      <List sx={{ p: 0 }}>
+      <List sx={{ p: 1, position: 'relative', zIndex: 1 }}>
         <ListItem disablePadding>
           <ListItemButton
             onClick={() => handleItemClick('/profile')}
@@ -153,9 +203,30 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
             sx={{
               minHeight: 48,
               px: 2.5,
+              mx: 1,
+              borderRadius: 3,
+              background: location.pathname === '/profile' 
+                ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%)'
+                : 'rgba(255, 255, 255, 0.6)',
+              border: location.pathname === '/profile' 
+                ? '1px solid rgba(16, 185, 129, 0.4)'
+                : '1px solid rgba(255, 255, 255, 0.3)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                background: location.pathname === '/profile' 
+                  ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%)'
+                  : 'rgba(16, 185, 129, 0.08)',
+                transform: 'translateX(6px)',
+                boxShadow: '0 8px 20px rgba(16, 185, 129, 0.25)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+              },
               '&.Mui-selected': {
-                backgroundColor: 'primary.light',
-                color: 'primary.contrastText',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.2) 100%)',
+                  transform: 'translateX(6px)',
+                },
               },
             }}
           >
@@ -164,12 +235,20 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
                 minWidth: 0,
                 mr: 3,
                 justifyContent: 'center',
-                color: location.pathname === '/profile' ? 'inherit' : 'text.secondary',
+                color: location.pathname === '/profile' ? '#10B981' : 'text.secondary',
+                transition: 'all 0.3s ease',
               }}
             >
               <AccountCircle />
             </ListItemIcon>
-            <ListItemText primary={t('nav.profile')} />
+            <ListItemText 
+              primary={t('nav.profile')}
+              primaryTypographyProps={{
+                fontWeight: location.pathname === '/profile' ? 600 : 500,
+                fontSize: '0.95rem',
+                color: location.pathname === '/profile' ? '#10B981' : 'text.primary',
+              }}
+            />
           </ListItemButton>
         </ListItem>
       </List>

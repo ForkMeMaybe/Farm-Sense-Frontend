@@ -1,17 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { livestockService } from '../../services/livestockService';
-
-export interface Livestock {
-  id: number;
-  farm: number;
-  tag_id: string;
-  species: string;
-  breed: string;
-  date_of_birth: string;
-  gender: 'M' | 'F';
-  health_status: 'healthy' | 'sick' | 'recovering';
-  current_weight_kg?: number;
-}
+import livestockService, { Livestock } from '../../services/livestockService';
 
 interface LivestockState {
   animals: Livestock[];
@@ -30,9 +18,8 @@ const initialState: LivestockState = {
 export const fetchLivestock = createAsyncThunk(
   'livestock/fetchAll',
   async () => {
-    const response = await livestockService.getAll();
-    const data = response.data;
-    return Array.isArray(data) ? data : (Array.isArray(data?.results) ? data.results : []);
+    const data = await livestockService.getAll();
+    return Array.isArray(data) ? data : [];
   }
 );
 
@@ -40,7 +27,7 @@ export const addLivestock = createAsyncThunk(
   'livestock/add',
   async (data: Omit<Livestock, 'id'>) => {
     const response = await livestockService.create(data);
-    return response.data;
+    return response;
   }
 );
 
@@ -48,7 +35,7 @@ export const updateLivestock = createAsyncThunk(
   'livestock/update',
   async ({ id, data }: { id: number; data: Partial<Livestock> }) => {
     const response = await livestockService.update(id, data);
-    return response.data;
+    return response;
   }
 );
 

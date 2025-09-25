@@ -1,13 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { authService } from '../../services/authService';
-
-interface User {
-  id: number;
-  email: string;
-  username: string;
-  owned_farm?: number;
-  labourer_profile?: number;
-}
+import authService, { User, LoginCredentials } from '../../services/authService';
+import TokenStorage from '../../utils/tokenStorage';
 
 interface AuthState {
   user: User | null;
@@ -18,9 +11,9 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  user: null,
-  token: localStorage.getItem('token'),
-  isAuthenticated: !!localStorage.getItem('token'),
+  user: TokenStorage.getUser(),
+  token: TokenStorage.getAccessToken(),
+  isAuthenticated: TokenStorage.isAuthenticated(),
   loading: false,
   error: null,
 };
@@ -28,10 +21,9 @@ const initialState: AuthState = {
 // Async thunks
 export const loginUser = createAsyncThunk(
   'auth/login',
-  async (credentials: { email: string; password: string }) => {
+  async (credentials: LoginCredentials) => {
     const response = await authService.login(credentials);
-    localStorage.setItem('token', response.data.access);
-    return response.data;
+    return response;
   }
 );
 
@@ -46,7 +38,6 @@ export const registerFarmOwner = createAsyncThunk(
     farm_location: string;
   }) => {
     const response = await authService.registerFarmOwner(data);
-    localStorage.setItem('token', response.token);
     return response;
   }
 );
@@ -60,7 +51,6 @@ export const registerLabourer = createAsyncThunk(
     re_password: string;
   }) => {
     const response = await authService.registerLabourer(data);
-    localStorage.setItem('token', response.token);
     return response;
   }
 );
@@ -68,8 +58,8 @@ export const registerLabourer = createAsyncThunk(
 export const getCurrentUser = createAsyncThunk(
   'auth/getCurrentUser',
   async () => {
-    const response = await authService.getCurrentUser();
-    return response.data;
+    const user = await authService.getCurrentUser();
+    return user;
   }
 );
 
@@ -78,7 +68,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      localStorage.removeItem('token');
+      TokenStorage.clearTokens();
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
@@ -97,6 +87,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.user = action.payload.user;
         state.token = action.payload.access;
         state.isAuthenticated = true;
         state.error = null;
