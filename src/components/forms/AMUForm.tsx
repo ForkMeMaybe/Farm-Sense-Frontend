@@ -140,7 +140,19 @@ const AMUForm: React.FC<AMUFormProps> = ({
                 value={formData.health_record}
                 onChange={(e) => handleChange("health_record", e.target.value)}
                 error={!!errors.health_record}
-                helperText={errors.health_record}
+                helperText={errors.health_record || "Choose the animal for this treatment"}
+                variant="outlined"
+                sx={{ 
+                  '& .MuiInputLabel-root': { 
+                    color: 'text.primary',
+                    fontWeight: 500 
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'primary.main',
+                    },
+                  }
+                }}
               >
                 {livestock.map((animal) => (
                   <MenuItem key={animal.id} value={animal.id}>
@@ -159,7 +171,19 @@ const AMUForm: React.FC<AMUFormProps> = ({
                 value={formData.drug}
                 onChange={(e) => handleChange("drug", e.target.value)}
                 error={!!errors.drug}
-                helperText={errors.drug}
+                helperText={errors.drug || "Choose the antimicrobial drug used"}
+                variant="outlined"
+                sx={{ 
+                  '& .MuiInputLabel-root': { 
+                    color: 'text.primary',
+                    fontWeight: 500 
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'primary.main',
+                    },
+                  }
+                }}
               >
                 {drugs.map((drug) => (
                   <MenuItem key={drug.id} value={drug.id}>

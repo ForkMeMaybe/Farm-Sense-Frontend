@@ -132,7 +132,19 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
                 value={formData.livestock}
                 onChange={(e) => handleChange("livestock", e.target.value)}
                 error={!!errors.livestock}
-                helperText={errors.livestock}
+                helperText={errors.livestock || "Choose the animal for this health record"}
+                variant="outlined"
+                sx={{ 
+                  '& .MuiInputLabel-root': { 
+                    color: 'text.primary',
+                    fontWeight: 500 
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'primary.main',
+                    },
+                  }
+                }}
               >
                 {livestock.map((animal) => (
                   <MenuItem key={animal.id} value={animal.id}>

@@ -152,7 +152,19 @@ const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
                 value={formData.livestock}
                 onChange={(e) => handleChange("livestock", e.target.value)}
                 error={!!errors.livestock}
-                helperText={errors.livestock}
+                helperText={errors.livestock || "Choose the animal for this yield record"}
+                variant="outlined"
+                sx={{ 
+                  '& .MuiInputLabel-root': { 
+                    color: 'text.primary',
+                    fontWeight: 500 
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'primary.main',
+                    },
+                  }
+                }}
               >
                 {livestock.map((animal) => (
                   <MenuItem key={animal.id} value={animal.id}>
@@ -171,7 +183,19 @@ const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
                 value={formData.yield_type}
                 onChange={(e) => handleYieldTypeChange(e.target.value)}
                 error={!!errors.yield_type}
-                helperText={errors.yield_type}
+                helperText={errors.yield_type || "Select the type of yield (milk, eggs, etc.)"}
+                variant="outlined"
+                sx={{ 
+                  '& .MuiInputLabel-root': { 
+                    color: 'text.primary',
+                    fontWeight: 500 
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'primary.main',
+                    },
+                  }
+                }}
               >
                 {yieldTypes.map((type) => (
                   <MenuItem key={type.type} value={type.type}>
