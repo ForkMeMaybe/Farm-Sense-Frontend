@@ -48,15 +48,43 @@ const AMUForm: React.FC<AMUFormProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Fetch livestock and drugs for dropdowns
-  const { data: livestock = [] } = useQuery({
+  const { data: livestock = [], isLoading: livestockLoading, error: livestockError } = useQuery({
     queryKey: ["livestock"],
-    queryFn: livestockService.getAll,
+    queryFn: async () => {
+      console.log("AMUForm - Making API call to livestockService.getAll");
+      try {
+        const result = await livestockService.getAll();
+        console.log("AMUForm - Livestock API call result:", result);
+        return result;
+      } catch (error) {
+        console.error("AMUForm - Livestock API call error:", error);
+        throw error;
+      }
+    },
   });
 
-  const { data: drugs = [] } = useQuery({
+  const { data: drugs = [], isLoading: drugsLoading, error: drugsError } = useQuery({
     queryKey: ["drugs"],
-    queryFn: drugService.getAll,
+    queryFn: async () => {
+      console.log("AMUForm - Making API call to drugService.getAll");
+      try {
+        const result = await drugService.getAll();
+        console.log("AMUForm - Drugs API call result:", result);
+        return result;
+      } catch (error) {
+        console.error("AMUForm - Drugs API call error:", error);
+        throw error;
+      }
+    },
   });
+
+  // Debug logging
+  console.log("AMUForm - Livestock data:", livestock);
+  console.log("AMUForm - Livestock loading:", livestockLoading);
+  console.log("AMUForm - Livestock error:", livestockError);
+  console.log("AMUForm - Drugs data:", drugs);
+  console.log("AMUForm - Drugs loading:", drugsLoading);
+  console.log("AMUForm - Drugs error:", drugsError);
 
   const handleChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -140,8 +168,14 @@ const AMUForm: React.FC<AMUFormProps> = ({
                 value={formData.health_record}
                 onChange={(e) => handleChange("health_record", e.target.value)}
                 error={!!errors.health_record}
-                helperText={errors.health_record || "Choose the animal for this treatment"}
+                helperText={
+                  errors.health_record || 
+                  livestockError ? "Error loading livestock" :
+                  livestockLoading ? "Loading livestock..." :
+                  "Choose the animal for this treatment"
+                }
                 variant="outlined"
+                disabled={livestockLoading}
                 sx={{ 
                   '& .MuiInputLabel-root': { 
                     color: 'text.primary',
@@ -154,11 +188,20 @@ const AMUForm: React.FC<AMUFormProps> = ({
                   }
                 }}
               >
-                {livestock.map((animal) => (
-                  <MenuItem key={animal.id} value={animal.id}>
-                    {animal.tag_id} - {animal.species} ({animal.breed})
+                {livestockLoading ? (
+                  <MenuItem disabled>
+                    <CircularProgress size={20} sx={{ mr: 1 }} />
+                    Loading livestock...
                   </MenuItem>
-                ))}
+                ) : livestock.length === 0 ? (
+                  <MenuItem disabled>No livestock available</MenuItem>
+                ) : (
+                  livestock.map((animal) => (
+                    <MenuItem key={animal.id} value={animal.id}>
+                      {animal.tag_id} - {animal.species} ({animal.breed})
+                    </MenuItem>
+                  ))
+                )}
               </TextField>
             </Grid>
 
@@ -171,8 +214,14 @@ const AMUForm: React.FC<AMUFormProps> = ({
                 value={formData.drug}
                 onChange={(e) => handleChange("drug", e.target.value)}
                 error={!!errors.drug}
-                helperText={errors.drug || "Choose the antimicrobial drug used"}
+                helperText={
+                  errors.drug || 
+                  drugsError ? "Error loading drugs" :
+                  drugsLoading ? "Loading drugs..." :
+                  "Choose the antimicrobial drug used"
+                }
                 variant="outlined"
+                disabled={drugsLoading}
                 sx={{ 
                   '& .MuiInputLabel-root': { 
                     color: 'text.primary',
@@ -185,12 +234,21 @@ const AMUForm: React.FC<AMUFormProps> = ({
                   }
                 }}
               >
-                {drugs.map((drug) => (
-                  <MenuItem key={drug.id} value={drug.id}>
-                    {drug.name}
-                    {drug.active_ingredient ? ` (${drug.active_ingredient})` : ''}
+                {drugsLoading ? (
+                  <MenuItem disabled>
+                    <CircularProgress size={20} sx={{ mr: 1 }} />
+                    Loading drugs...
                   </MenuItem>
-                ))}
+                ) : drugs.length === 0 ? (
+                  <MenuItem disabled>No drugs available</MenuItem>
+                ) : (
+                  drugs.map((drug) => (
+                    <MenuItem key={drug.id} value={drug.id}>
+                      {drug.name}
+                      {drug.active_ingredient ? ` (${drug.active_ingredient})` : ''}
+                    </MenuItem>
+                  ))
+                )}
               </TextField>
             </Grid>
 

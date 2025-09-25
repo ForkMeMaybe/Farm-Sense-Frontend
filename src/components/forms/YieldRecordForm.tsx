@@ -48,10 +48,25 @@ const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Fetch livestock for dropdown
-  const { data: livestock = [] } = useQuery({
+  const { data: livestock = [], isLoading: livestockLoading, error: livestockError } = useQuery({
     queryKey: ["livestock"],
-    queryFn: livestockService.getAll,
+    queryFn: async () => {
+      console.log("YieldRecordForm - Making API call to livestockService.getAll");
+      try {
+        const result = await livestockService.getAll();
+        console.log("YieldRecordForm - API call result:", result);
+        return result;
+      } catch (error) {
+        console.error("YieldRecordForm - API call error:", error);
+        throw error;
+      }
+    },
   });
+
+  // Debug logging
+  console.log("YieldRecordForm - Livestock data:", livestock);
+  console.log("YieldRecordForm - Livestock loading:", livestockLoading);
+  console.log("YieldRecordForm - Livestock error:", livestockError);
 
   const yieldTypes = [
     { type: "milk", unit: "liters" },
@@ -152,8 +167,14 @@ const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
                 value={formData.livestock}
                 onChange={(e) => handleChange("livestock", e.target.value)}
                 error={!!errors.livestock}
-                helperText={errors.livestock || "Choose the animal for this yield record"}
+                helperText={
+                  errors.livestock || 
+                  livestockError ? "Error loading livestock" :
+                  livestockLoading ? "Loading livestock..." :
+                  "Choose the animal for this yield record"
+                }
                 variant="outlined"
+                disabled={livestockLoading}
                 sx={{ 
                   '& .MuiInputLabel-root': { 
                     color: 'text.primary',
@@ -166,11 +187,20 @@ const YieldRecordForm: React.FC<YieldRecordFormProps> = ({
                   }
                 }}
               >
-                {livestock.map((animal) => (
-                  <MenuItem key={animal.id} value={animal.id}>
-                    {animal.tag_id} - {animal.species} ({animal.breed})
+                {livestockLoading ? (
+                  <MenuItem disabled>
+                    <CircularProgress size={20} sx={{ mr: 1 }} />
+                    Loading livestock...
                   </MenuItem>
-                ))}
+                ) : livestock.length === 0 ? (
+                  <MenuItem disabled>No livestock available</MenuItem>
+                ) : (
+                  livestock.map((animal) => (
+                    <MenuItem key={animal.id} value={animal.id}>
+                      {animal.tag_id} - {animal.species} ({animal.breed})
+                    </MenuItem>
+                  ))
+                )}
               </TextField>
             </Grid>
 

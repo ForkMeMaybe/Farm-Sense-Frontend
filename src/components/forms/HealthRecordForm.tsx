@@ -52,10 +52,28 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Fetch livestock for dropdown
-  const { data: livestock = [] } = useQuery({
+  const { data: livestock = [], isLoading: livestockLoading, error: livestockError } = useQuery({
     queryKey: ["livestock"],
-    queryFn: livestockService.getAll,
+    queryFn: async () => {
+      console.log("HealthRecordForm - Making API call to livestockService.getAll");
+      try {
+        const result = await livestockService.getAll();
+        console.log("HealthRecordForm - API call result:", result);
+        return result;
+      } catch (error) {
+        console.error("HealthRecordForm - API call error:", error);
+        throw error;
+      }
+    },
   });
+
+  // Debug logging
+  console.log("HealthRecordForm - Livestock data:", livestock);
+  console.log("HealthRecordForm - Livestock loading:", livestockLoading);
+  console.log("HealthRecordForm - Livestock error:", livestockError);
+  console.log("HealthRecordForm - Livestock length:", livestock?.length);
+  console.log("HealthRecordForm - Livestock type:", typeof livestock);
+  console.log("HealthRecordForm - Is array:", Array.isArray(livestock));
 
   const eventTypes = [
     { value: "vaccination", label: "Vaccination" },
@@ -132,8 +150,14 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
                 value={formData.livestock}
                 onChange={(e) => handleChange("livestock", e.target.value)}
                 error={!!errors.livestock}
-                helperText={errors.livestock || "Choose the animal for this health record"}
+                helperText={
+                  errors.livestock || 
+                  livestockError ? "Error loading livestock" :
+                  livestockLoading ? "Loading livestock..." :
+                  "Choose the animal for this health record"
+                }
                 variant="outlined"
+                disabled={livestockLoading}
                 sx={{ 
                   '& .MuiInputLabel-root': { 
                     color: 'text.primary',
@@ -146,11 +170,20 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
                   }
                 }}
               >
-                {livestock.map((animal) => (
-                  <MenuItem key={animal.id} value={animal.id}>
-                    {animal.tag_id} - {animal.species} ({animal.breed})
+                {livestockLoading ? (
+                  <MenuItem disabled>
+                    <CircularProgress size={20} sx={{ mr: 1 }} />
+                    Loading livestock...
                   </MenuItem>
-                ))}
+                ) : !livestock || livestock.length === 0 ? (
+                  <MenuItem disabled>No livestock available</MenuItem>
+                ) : (
+                  livestock.map((animal) => (
+                    <MenuItem key={animal.id} value={animal.id}>
+                      {animal.tag_id} - {animal.species} ({animal.breed})
+                    </MenuItem>
+                  ))
+                )}
               </TextField>
             </Grid>
 
