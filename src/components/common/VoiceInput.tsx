@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Button,
@@ -55,6 +56,7 @@ interface ParsedField {
 
 const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceData, onClose, isOpen = false }) => {
   const [isListening, setIsListening] = useState(false);
+  const { i18n } = useTranslation();
   const [isProcessing, setIsProcessing] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [parsedFields, setParsedFields] = useState<ParsedField[]>([]);
@@ -213,7 +215,19 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceData, onClose, isOpen = 
       
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = 'en-US';
+      // Set language based on current app locale (fallback en-IN)
+      const locale = i18n?.language || 'en';
+      const localeMap: Record<string, string> = {
+        en: 'en-IN',
+        'en-US': 'en-US',
+        hi: 'hi-IN',
+        mr: 'mr-IN',
+        gu: 'gu-IN',
+        te: 'te-IN',
+        ta: 'ta-IN',
+        kn: 'kn-IN',
+      };
+      recognitionRef.current.lang = localeMap[locale] || 'en-IN';
 
       recognitionRef.current.onstart = () => {
         setIsListening(true);
@@ -243,7 +257,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceData, onClose, isOpen = 
     } else {
       setError('Speech recognition is not supported in this browser');
     }
-  }, []);
+  }, [i18n?.language]);
 
   const startListening = () => {
     if (recognitionRef.current && !isListening) {
@@ -274,7 +288,8 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceData, onClose, isOpen = 
           'Authorization': `JWT ${localStorage.getItem('access_token')}`,
         },
         body: JSON.stringify({
-          transcript: transcript
+          transcript: transcript,
+          language: (i18n?.language || 'en')
         })
       });
 
