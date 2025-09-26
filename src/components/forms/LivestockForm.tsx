@@ -15,10 +15,14 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import { Mic as MicIcon } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useLivestock } from "../../hooks/useLivestock";
 import { Livestock } from "../../services/livestockService";
+import VoiceInput from "../common/VoiceInput";
 
 interface LivestockFormProps {
   open: boolean;
@@ -47,6 +51,7 @@ const LivestockForm: React.FC<LivestockFormProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [voiceDialogOpen, setVoiceDialogOpen] = useState(false);
 
   const speciesOptions = [
     { value: "cow", label: "Cow" },
@@ -71,6 +76,11 @@ const LivestockForm: React.FC<LivestockFormProps> = ({
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
+  };
+
+  const handleVoiceData = (voiceData: Partial<LivestockFormData>) => {
+    setFormData((prev) => ({ ...prev, ...voiceData }));
+    setVoiceDialogOpen(false);
   };
 
   const validateForm = () => {
@@ -134,9 +144,28 @@ const LivestockForm: React.FC<LivestockFormProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        <Typography variant="h6">
-          {mode === "create" ? "Add New Livestock" : "Edit Livestock"}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="h6">
+            {mode === "create" ? "Add New Livestock" : "Edit Livestock"}
+          </Typography>
+          {mode === "create" && (
+            <Tooltip title="Use voice input to fill the form">
+              <IconButton
+                onClick={() => setVoiceDialogOpen(true)}
+                color="primary"
+                sx={{ 
+                  bgcolor: 'primary.light',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: 'primary.main',
+                  }
+                }}
+              >
+                <MicIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
       </DialogTitle>
 
       <DialogContent>
@@ -172,24 +201,16 @@ const LivestockForm: React.FC<LivestockFormProps> = ({
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required error={!!errors.breed}>
-                <InputLabel>Breed</InputLabel>
-                <Select
-                  value={formData.breed}
-                  onChange={(e) => handleChange("breed", e.target.value)}
-                  label="Breed"
-                  disabled={!formData.species}
-                >
-                  {formData.species &&
-                    breedOptions[
-                      formData.species as keyof typeof breedOptions
-                    ]?.map((breed) => (
-                      <MenuItem key={breed} value={breed}>
-                        {breed}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
+              <TextField
+                fullWidth
+                label="Breed"
+                value={formData.breed}
+                onChange={(e) => handleChange("breed", e.target.value)}
+                error={!!errors.breed}
+                helperText={errors.breed || "Enter the breed name (e.g., Holstein, Angus, Boer)"}
+                required
+                placeholder="e.g., Holstein, Angus, Boer, Jersey"
+              />
             </Grid>
 
             <Grid item xs={12} sm={6}>
@@ -272,6 +293,12 @@ const LivestockForm: React.FC<LivestockFormProps> = ({
             : "Update Livestock"}
         </Button>
       </DialogActions>
+
+      <VoiceInput
+        isOpen={voiceDialogOpen}
+        onClose={() => setVoiceDialogOpen(false)}
+        onVoiceData={handleVoiceData}
+      />
     </Dialog>
   );
 };

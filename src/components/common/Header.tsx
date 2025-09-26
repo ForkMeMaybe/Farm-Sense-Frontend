@@ -82,25 +82,53 @@ const Header: React.FC = () => {
         </IconButton>
 
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              fontWeight: 800,
-              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontSize: { xs: '1.2rem', sm: '1.4rem' },
-              letterSpacing: '-0.02em',
-            }}
-          >
-            🌾 FarmSense
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: 2,
+                background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: '1.2rem',
+                  fontWeight: 600,
+                  color: 'white',
+                }}
+              >
+                🌾
+              </Typography>
+            </Box>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                fontWeight: 800,
+                background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontSize: { xs: '1.2rem', sm: '1.4rem' },
+                letterSpacing: '-0.02em',
+              }}
+            >
+              FarmSense
+            </Typography>
+          </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {!isMobile && <LanguageSwitcher />}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {!isMobile && (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <LanguageSwitcher />
+            </Box>
+          )}
           
           <IconButton 
             color="inherit" 

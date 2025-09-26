@@ -39,6 +39,7 @@ import FeedFormPage from "./pages/FeedFormPage";
 import AMUInsightsPage from "./pages/AMUInsightsPage";
 import FeedInsightsPage from "./pages/FeedInsightsPage";
 import YieldInsightsPage from "./pages/YieldInsightsPage";
+import VoiceDemoPage from "./pages/VoiceDemoPage";
 
 import "./styles/globals.css";
 
@@ -230,6 +231,16 @@ function App() {
                       <ProtectedRoute>
                         <Layout>
                           <YieldInsightsPage />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/voice-demo"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <VoiceDemoPage />
                         </Layout>
                       </ProtectedRoute>
                     }

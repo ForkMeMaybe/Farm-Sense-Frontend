@@ -14,13 +14,17 @@ import {
   Box,
   Typography,
   CircularProgress,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import { Mic as MicIcon } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import livestockService from "../../services/livestockService";
 import healthRecordService, {
   HealthRecord,
 } from "../../services/healthService";
+import GenericVoiceInput from "../common/GenericVoiceInput";
 
 interface HealthRecordFormProps {
   open: boolean;
@@ -50,6 +54,7 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [voiceDialogOpen, setVoiceDialogOpen] = useState(false);
 
   // Fetch livestock for dropdown
   const { data: livestock = [], isLoading: livestockLoading, error: livestockError } = useQuery({
@@ -87,6 +92,15 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
+  };
+
+  const handleVoiceData = (data: Record<string, any>) => {
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        handleChange(key, value);
+      }
+    });
+    setVoiceDialogOpen(false);
   };
 
   const validateForm = () => {
@@ -133,9 +147,28 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        <Typography variant="h6">
-          {mode === "create" ? "Add Health Record" : "Edit Health Record"}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="h6">
+            {mode === "create" ? "Add Health Record" : "Edit Health Record"}
+          </Typography>
+          {mode === "create" && (
+            <Tooltip title="Use voice input to fill the form">
+              <IconButton
+                onClick={() => setVoiceDialogOpen(true)}
+                color="primary"
+                sx={{ 
+                  bgcolor: 'primary.light',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: 'primary.main',
+                  }
+                }}
+              >
+                <MicIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
       </DialogTitle>
 
       <DialogContent>
@@ -267,6 +300,15 @@ const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
           {mode === "create" ? "Add Health Record" : "Update Health Record"}
         </Button>
       </DialogActions>
+
+      <GenericVoiceInput
+        isOpen={voiceDialogOpen}
+        onClose={() => setVoiceDialogOpen(false)}
+        onVoiceData={handleVoiceData}
+        formType="health"
+        title="Health Record Voice Input"
+        description="Speak naturally about the health event, animal, and treatment details"
+      />
     </Dialog>
   );
 };

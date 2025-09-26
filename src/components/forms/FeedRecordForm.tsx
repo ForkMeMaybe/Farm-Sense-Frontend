@@ -14,12 +14,16 @@ import {
   Box,
   Typography,
   CircularProgress,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import { Mic as MicIcon } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import livestockService from "../../services/livestockService";
 import { feedService, FeedRecord } from "../../services/farmService";
 import apiClient from "../../services/api";
+import GenericVoiceInput from "../common/GenericVoiceInput";
 
 interface FeedRecordFormProps {
   open: boolean;
@@ -48,6 +52,7 @@ const FeedRecordForm: React.FC<FeedRecordFormProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [voiceDialogOpen, setVoiceDialogOpen] = useState(false);
 
   // Fetch livestock and feeds for dropdowns
   const { data: livestock = [] } = useQuery({
@@ -63,24 +68,22 @@ const FeedRecordForm: React.FC<FeedRecordFormProps> = ({
     },
   });
 
-  const feedTypes = [
-    "Hay",
-    "Grass",
-    "Silage",
-    "Concentrate",
-    "Grain",
-    "Protein Supplement",
-    "Mineral Supplement",
-    "Vitamin Supplement",
-    "Commercial Feed",
-    "Other",
-  ];
+  // feed_type is free text per backend model
 
   const handleChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
+  };
+
+  const handleVoiceData = (data: Record<string, any>) => {
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        handleChange(key, value);
+      }
+    });
+    setVoiceDialogOpen(false);
   };
 
   const validateForm = () => {
@@ -142,9 +145,28 @@ const FeedRecordForm: React.FC<FeedRecordFormProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        <Typography variant="h6">
-          {mode === "create" ? "Record Feed" : "Edit Feed Record"}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="h6">
+            {mode === "create" ? "Record Feed" : "Edit Feed Record"}
+          </Typography>
+          {mode === "create" && (
+            <Tooltip title="Use voice input to fill the form">
+              <IconButton
+                onClick={() => setVoiceDialogOpen(true)}
+                color="primary"
+                sx={{ 
+                  bgcolor: 'primary.light',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: 'primary.main',
+                  }
+                }}
+              >
+                <MicIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
       </DialogTitle>
 
       <DialogContent>
@@ -168,20 +190,16 @@ const FeedRecordForm: React.FC<FeedRecordFormProps> = ({
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required error={!!errors.feed_type}>
-                <InputLabel>Feed Type</InputLabel>
-                <Select
-                  value={formData.feed_type}
-                  onChange={(e) => handleChange("feed_type", e.target.value)}
-                  label="Feed Type"
-                >
-                  {feedTypes.map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                fullWidth
+                required
+                label="Feed Type"
+                value={formData.feed_type}
+                onChange={(e) => handleChange("feed_type", e.target.value)}
+                error={!!errors.feed_type}
+                helperText={errors.feed_type}
+                placeholder="e.g., Hay, Grass, Silage, Concentrate"
+              />
             </Grid>
 
             <Grid item xs={12} sm={6}>
@@ -249,6 +267,15 @@ const FeedRecordForm: React.FC<FeedRecordFormProps> = ({
           {mode === "create" ? "Record Feed" : "Update Feed Record"}
         </Button>
       </DialogActions>
+
+      <GenericVoiceInput
+        isOpen={voiceDialogOpen}
+        onClose={() => setVoiceDialogOpen(false)}
+        onVoiceData={handleVoiceData}
+        formType="feed_record"
+        title="Feed Record Voice Input"
+        description="Speak naturally about the feeding details, animal, feed type, and quantities"
+      />
     </Dialog>
   );
 };

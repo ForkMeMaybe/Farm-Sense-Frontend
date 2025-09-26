@@ -18,6 +18,7 @@ import {
   Agriculture,
   Assessment,
   AccountCircle,
+  Mic,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -45,6 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, isMobile }) => {
     { text: 'AMU Insights', icon: <Assessment />, path: '/insights/amu' },
     { text: 'Feed Insights', icon: <Assessment />, path: '/insights/feed' },
     { text: 'Yield Insights', icon: <Assessment />, path: '/insights/yield' },
+    { text: 'Voice Demo', icon: <Mic />, path: '/voice-demo' },
   ];
 
   const handleItemClick = (path: string) => {
