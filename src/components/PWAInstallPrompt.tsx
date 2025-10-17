@@ -188,3 +188,4 @@ const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ onInstall, onDismis
 };
 
 export default PWAInstallPrompt;
+
