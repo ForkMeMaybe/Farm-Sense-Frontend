@@ -16,11 +16,8 @@ class ApiClient {
 
     this.instance = axios.create({
       baseURL,
-      // Removed timeout to allow API calls to take as long as needed
       headers: {
         "Content-Type": "application/json",
-        // Only add ngrok header in production (proxy handles it in dev)
-        ...(import.meta.env.PROD && { "ngrok-skip-browser-warning": "true" }),
       },
     });
 
@@ -38,14 +35,7 @@ class ApiClient {
 
         // In development, the proxy handles ngrok headers
         // In production, add ngrok header if needed
-        if (import.meta.env.PROD) {
-          try {
-            const urlHost = new URL(config.baseURL || "").host;
-            if (urlHost.includes("ngrok")) {
-              (config.headers as any)["ngrok-skip-browser-warning"] = "true";
-            }
-          } catch {}
-        }
+
         return config;
       },
       (error) => Promise.reject(error),
@@ -80,17 +70,9 @@ class ApiClient {
               ? "/auth/jwt/refresh/" // Use relative URL in development (proxy handles it)
               : `${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/auth/jwt/refresh/`;
 
-            const response = await axios.post(
-              refreshURL,
-              { refresh: refreshToken },
-              {
-                headers: {
-                  ...(import.meta.env.PROD && {
-                    "ngrok-skip-browser-warning": "true",
-                  }),
-                },
-              },
-            );
+            const response = await axios.post(refreshURL, {
+              refresh: refreshToken,
+            });
 
             const { access } = response.data;
             TokenStorage.setTokens(access, refreshToken);
