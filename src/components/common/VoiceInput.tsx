@@ -281,7 +281,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceData, onClose, isOpen = 
     
     try {
       // Call the AI-powered voice parsing API
-      const response = await fetch('/api/amu-insights/parse-voice/', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/amu-insights/parse-voice/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
